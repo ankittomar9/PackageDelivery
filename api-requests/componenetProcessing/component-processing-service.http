@@ -1,0 +1,56 @@
+### 1. Authenticate & Obtain JWT Token (Port 8084)
+POST http://localhost:8084/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {%
+    // Automatically store the JWT Token into global variable 'auth_token'
+    client.global.set("auth_token", response.body.jwtToken);
+%}
+
+###
+
+### 2. Submit Component Return Processing Request (Port 8081 - Integral Hardware)
+POST http://localhost:8081/service
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "userName": "john_doe",
+  "contactNumber": 9876543210,
+  "creditCardNumber": 4532890123456789,
+  "componentType": "Integral",
+  "componentName": "MacBook Pro M3 Display Assembly",
+  "quantityOfDefective": 1,
+  "isPriorityRequest": true
+}
+
+###
+
+### 3. Submit Accessory Return Processing Request (Port 8081 - Standard Cable)
+POST http://localhost:8081/service
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "userName": "sarah_connor",
+  "contactNumber": 9823019283,
+  "creditCardNumber": 5412759081234567,
+  "componentType": "Accessory",
+  "componentName": "Sony WH-1000XM5 USB-C Charging Cable",
+  "quantityOfDefective": 2,
+  "isPriorityRequest": false
+}
+
+###
+
+### 4. Execute Payment for Return Order Charges (Port 8081)
+# Parameters: /payment/{requestID}/{creditCardNumber}/{creditLimit}/{processingCharge}
+POST http://localhost:8081/payment/1/4532890123456789/50000/700
+Authorization: Bearer {{auth_token}}
+
+###

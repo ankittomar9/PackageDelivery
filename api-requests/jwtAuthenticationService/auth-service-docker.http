@@ -1,0 +1,30 @@
+### 1. Login Request (Retrieve JWT Token)
+POST http://127.0.0.1:8084/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+
+> {%
+    // Store the returned jwtToken into global variable 'auth_token'
+    client.global.set("auth_token", response.body.jwtToken);
+%}
+
+###
+
+### 2. Validate Token Request (Pass stored token in Authorization Header)
+GET http://localhost:8084/validate
+Authorization: Bearer {{auth_token}}
+
+###
+
+### 3. Invalid Login Request (Should Return 401 with ErrorResponseDTO)
+POST http://localhost:8084/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "WRONG_PASSWORD"
+}

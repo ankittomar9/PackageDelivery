@@ -1,4 +1,4 @@
-package org.example.jwtauthentication;
+package com.company.authorizationservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,5 +9,6 @@ class JwtAuthenticationApplicationTests {
     @Test
     void contextLoads() {
     }
+
 
 }
