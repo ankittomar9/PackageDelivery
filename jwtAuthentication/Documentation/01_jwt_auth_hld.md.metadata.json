@@ -1,0 +1,5 @@
+{
+  "summary":  "High-Level Design (HLD) Document for jwtAuthentication Microservice including system architecture, security boundary, sequence diagrams, and Docker deployment topology.",
+  "updatedAt":  "2026-08-12T13:17:45.406098400Z",
+  "userFacing":  true
+}
