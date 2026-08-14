@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Component Processing Controller", description = "Endpoints for initiating component return processing and completing payments")
+@CrossOrigin(origins = "*")
 public class ComponentProcessingController {
 
     private final IntegralPartService integralPartService;

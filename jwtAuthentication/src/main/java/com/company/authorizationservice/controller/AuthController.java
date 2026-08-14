@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "Authentication Controller", description = "Endpoints for user login and JWT token validation")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;

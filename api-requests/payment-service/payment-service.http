@@ -1,0 +1,10 @@
+### 1. Test Feign Inter-Service Card Balance Deduction (Port 8083)
+# Parameters: /card/{cardNumber}/{charge}
+GET http://localhost:8083/card/4532890123456789/700.0
+
+###
+
+### 2. Execute Stripe Gateway Payment & Generate Digital Receipt (Port 8083)
+POST http://localhost:8083/api/v1/payments/stripe-charge?cardNumber=4532890123456789&charge=700.0&currency=INR
+
+###

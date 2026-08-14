@@ -3,21 +3,14 @@
   <component name="CompilerConfiguration">
     <annotationProcessing>
       <profile default="true" name="Default" enabled="true" />
-      <profile name="Annotation profile for jwtAuthentication" enabled="true">
-        <sourceOutputDir name="target/generated-sources/annotations" />
-        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-          <entry name="$MAVEN_REPOSITORY$/org/projectlombok/lombok/1.18.46/lombok-1.18.46.jar" />
-        </processorPath>
-        <module name="jwtAuthentication" />
-      </profile>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="componentprocessingservice" />
+        <module name="eurekaserver" />
+        <module name="apigateway" />
+        <module name="jwtAuthentication" />
         <module name="packaginganddeliveryservice" />
         <module name="paymentservice" />
       </profile>
@@ -25,7 +18,9 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="apigateway" options="-parameters" />
       <module name="componentprocessingservice" options="-parameters" />
+      <module name="eurekaserver" options="-parameters" />
       <module name="jwtAuthentication" options="-parameters" />
       <module name="packaginganddeliveryservice" options="-parameters" />
       <module name="paymentservice" options="-parameters" />

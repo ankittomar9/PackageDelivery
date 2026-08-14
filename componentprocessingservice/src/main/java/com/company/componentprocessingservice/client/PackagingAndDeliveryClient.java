@@ -4,7 +4,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "packagingClient", url = "${packaging.service.url:http://localhost:8082}")
+// BEFORE: @FeignClient(name = "packagingClient", url = "http://localhost:8082")
+// AFTER:  Eureka Dynamic Lookup!
+@FeignClient(name = "packaginganddeliveryservice")
 public interface PackagingAndDeliveryClient {
 
     @GetMapping("/PackagingAndDeliveryCharge/{componentType}/{count}")

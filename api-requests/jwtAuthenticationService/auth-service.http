@@ -28,3 +28,21 @@ Content-Type: application/json
   "username": "admin",
   "password": "WRONG_PASSWORD"
 }
+
+
+### 1. Login Request (Retrieve JWT Token) - API Gateway
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+### 1. Invalid Login Request (Retrieve JWT Token) - API Gateway
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "wrong_user",
+  "password": "invalid_password"
+}

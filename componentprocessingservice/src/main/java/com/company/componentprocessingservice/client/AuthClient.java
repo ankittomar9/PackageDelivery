@@ -5,7 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name = "authClient", url = "${auth.service.url:http://localhost:8084}")
+// BEFORE: @FeignClient(name = "authClient", url = "http://localhost:8084")
+// AFTER:  Eureka Dynamic Lookup!
+@FeignClient(name = "jwtauthenticationservice")
 public interface AuthClient {
 
     @GetMapping("/validate")

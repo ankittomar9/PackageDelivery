@@ -9,6 +9,8 @@
         <option value="$PROJECT_DIR$/componentprocessingservice/pom.xml" />
         <option value="$PROJECT_DIR$/packaginganddeliveryservice/pom.xml" />
         <option value="$PROJECT_DIR$/paymentservice/pom.xml" />
+        <option value="$PROJECT_DIR$/eurekaserver/pom.xml" />
+        <option value="$PROJECT_DIR$/apigateway/pom.xml" />
       </list>
     </option>
   </component>

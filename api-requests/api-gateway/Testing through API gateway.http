@@ -1,0 +1,43 @@
+
+### 1. Login Request (Retrieve JWT Token) - API Gateway
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin"
+}
+### 1. Invalid Login Request (Retrieve JWT Token) - API Gateway
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "username": "wrong_user",
+  "password": "invalid_password"
+}
+
+
+
+### 3. Component Processing Service Request - API Gateway
+
+POST http://localhost:8080/service
+Content-Type: application/json
+Authorization: Bearer <YOUR_JWT_TOKEN>
+
+{
+  "userName": "john_doe",
+  "contactNumber": 9876543210,
+  "creditCardNumber": 4532890123456789,
+  "componentType": "UnknownCategory",
+  "componentName": "Test Item",
+  "quantityOfDefective": 1,
+  "isPriorityRequest": false
+}
+
+
+### 1. Test Integral Component Packaging Charge (Port 8082 - Count 1)
+
+POST http://localhost:8080/service
+
+###
+
