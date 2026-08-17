@@ -12,7 +12,9 @@
         <module name="apigateway" />
         <module name="jwtAuthentication" />
         <module name="packaginganddeliveryservice" />
+        <module name="configserver" />
         <module name="paymentservice" />
+        <module name="notificationservice" />
       </profile>
     </annotationProcessing>
   </component>
@@ -20,8 +22,10 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="apigateway" options="-parameters" />
       <module name="componentprocessingservice" options="-parameters" />
+      <module name="configserver" options="-parameters" />
       <module name="eurekaserver" options="-parameters" />
       <module name="jwtAuthentication" options="-parameters" />
+      <module name="notificationservice" options="-parameters" />
       <module name="packaginganddeliveryservice" options="-parameters" />
       <module name="paymentservice" options="-parameters" />
     </option>

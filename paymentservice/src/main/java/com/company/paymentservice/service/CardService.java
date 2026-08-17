@@ -1,5 +1,6 @@
 package com.company.paymentservice.service;
 
+import com.company.paymentservice.dto.OrderReturnPaidEvent;
 import com.company.paymentservice.dto.PaymentReceiptDTO;
 import com.company.paymentservice.entity.CreditCard;
 import com.company.paymentservice.entity.PaymentReceipt;
@@ -8,6 +9,7 @@ import com.company.paymentservice.repository.CardRepository;
 import com.company.paymentservice.repository.PaymentReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final PaymentReceiptRepository receiptRepository;
+    private final KafkaTemplate<String, OrderReturnPaidEvent> kafkaTemplate; // <--- Kafka Producer!
 
     /**
      * Legacy & Feign Compatible Balance Deduction
@@ -75,6 +78,23 @@ public class CardService {
                 .build();
 
         receiptRepository.save(receipt);
+
+        //  PUBLISH ASYNCHRONOUS EVENT TO KAFKA TOPIC "return-orders.paid"
+        OrderReturnPaidEvent event = new OrderReturnPaidEvent(
+                txId,
+                receiptNo,
+                cardNumber,
+                charge,
+                status,
+                LocalDateTime.now()
+        );
+
+        try {
+            kafkaTemplate.send("return-orders.paid", txId, event);
+            log.info("Published OrderReturnPaidEvent to Kafka topic 'return-orders.paid': {}", txId);
+        } catch (Exception e) {
+            log.warn("Kafka Broker offline. Falling back cleanly without blocking payment: {}", e.getMessage());
+        }
 
         return new PaymentReceiptDTO(
                 txId,
