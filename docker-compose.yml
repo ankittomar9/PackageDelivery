@@ -1,0 +1,188 @@
+networks:
+  return_order_mesh_net:
+    driver: bridge
+
+services:
+  # ==========================================
+  # 1. Apache Kafka & Zookeeper Event Bus
+  # ==========================================
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: zookeeper
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: kafka
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  # ==========================================
+  # 2. Service Discovery: Eureka Server (Port 8761)
+  # ==========================================
+  eurekaserver:
+    build:
+      context: ./eurekaserver
+      dockerfile: Dockerfile
+    container_name: eurekaserver
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8761:8761"
+
+  # ==========================================
+  # 3. Centralized Config Server (Port 8888)
+  # ==========================================
+  configserver:
+    build:
+      context: ./configserver
+      dockerfile: Dockerfile
+    container_name: configserver
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8888:8888"
+    depends_on:
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+
+  # ==========================================
+  # 4. Auth Microservice (Port 8084)
+  # ==========================================
+  jwtauthenticationservice:
+    build:
+      context: ./jwtAuthentication
+      dockerfile: Dockerfile
+    container_name: jwtauthenticationservice
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+
+  # ==========================================
+  # 5. Logistics Microservice (Port 8082)
+  # ==========================================
+  packaginganddeliveryservice:
+    build:
+      context: ./packaginganddeliveryservice
+      dockerfile: Dockerfile
+    container_name: packaginganddeliveryservice
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+
+  # ==========================================
+  # 6. Payment Microservice & Kafka Producer (Port 8083)
+  # ==========================================
+  paymentservice:
+    build:
+      context: ./paymentservice
+      dockerfile: Dockerfile
+    container_name: paymentservice
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eurekaserver
+      - kafka
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+
+  # ==========================================
+  # 7. Order Processing Microservice (Port 8081)
+  # ==========================================
+  componentprocessingservice:
+    build:
+      context: ./componentprocessingservice
+      dockerfile: Dockerfile
+    container_name: componentprocessingservice
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eurekaserver
+      - jwtauthenticationservice
+      - packaginganddeliveryservice
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+
+  # ==========================================
+  # 8. Notification Consumer Microservice (Port 8085)
+  # ==========================================
+  notificationservice:
+    build:
+      context: ./notificationservice
+      dockerfile: Dockerfile
+    container_name: notificationservice
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eurekaserver
+      - kafka
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+      - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+
+  # ==========================================
+  # 9. Edge API Gateway (Port 8080)
+  # ==========================================
+  apigateway:
+    build:
+      context: ./apigateway
+      dockerfile: Dockerfile
+    container_name: apigateway
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eurekaserver
+    environment:
+      - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://eurekaserver:8761/eureka/
+
+  # ==========================================
+  # 10. React SPA WebPortal (Port 5173)
+  # ==========================================
+  webportal:
+    build:
+      context: ./webportal
+      dockerfile: Dockerfile
+    container_name: webportal
+    networks:
+      - return_order_mesh_net
+    ports:
+      - "5173:5173"
+    depends_on:
+      - apigateway
